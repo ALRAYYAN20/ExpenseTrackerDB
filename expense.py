@@ -22,12 +22,22 @@ else:
 - - THIS IS EXAMPLE CODE I LEARNED FROM PYTHON COURSE - - 
     
 '''
+class Expense:
+    def __init__(self, name, amount, category, id=None) -> None:
+        self.id = id
+        self.name = name
+        self.amount = amount
+        self.category = category
+
+    def __repr__(self):
+        return f'<Expense #{self.id}: {self.name}, ₹{self.amount:.2f}, {self.category}>'
 
 
-
+'''
 class Expense:
 
-    def __init__(self, name, amount, category)->None:
+    def __init__(self, name, amount, category, id=None)->None:
+        self.id = id
         self.name = name 
         self.amount = amount
         self.category = category
@@ -37,4 +47,5 @@ class Expense:
 # now the output without below code will look like this : <expense.Expense object at 0x000001E619C06B70>
 # to avoid this and get data as a string , we will use a default function called __repr__ stands for representation 
     def __repr__(self):
-        return f'< Expense: {self.name} , ₹{self.amount:.2f} , {self.category} >'                                                             
+        return f'< Expense:{self.id}, {self.name} , ₹{self.amount:.2f} , {self.category} >'                                                             
+    '''

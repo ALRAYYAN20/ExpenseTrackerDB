@@ -40,25 +40,39 @@ def get_all_expenses():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT name, amount, category FROM expenses")
+    cursor.execute("SELECT id ,name, amount, category FROM expenses")
     rows = cursor.fetchall()
 
     conn.close()
 
     expenses = []
-    for name, amount, category in rows:
+    for id, name, amount, category in rows:
         expenses.append(
-            Expense(name=name,amount=amount,category=category)
+            Expense(id=id, name=name,amount=amount,category=category)
         )
 
     return expenses
+
+def get_expense_by_id(expense_id :int):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, name , amount, category FROM expenses WHERE id = ?",
+                    (expense_id),
+                    )
+    row = cursor.fetchone()
+    conn.close()
+
+    return row 
+
 
 def delete_expenses_by_id(expense_id: int):
 
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id))
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id),)
 
     conn.commit()
     conn.close()
