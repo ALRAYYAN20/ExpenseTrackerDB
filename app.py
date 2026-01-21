@@ -5,7 +5,7 @@
 # 4. SHOW REMAINING BUDGET
 
 from expense import Expense
-from database import initialize_database, add_expense, get_all_expenses
+from database import initialize_database, add_expense, get_all_expenses , get_expense_by_id
 import calendar
 import datetime
 
@@ -18,18 +18,43 @@ def main(): # this can be ran af func for other app you use to avoid that and on
 
     initialize_database()
 
-    # User enters expense
-    expense = get_user_expense()
-    # ^ i did this so it will get the data from expense.py file as its a CVS project
-
-    # Write it to a file
-    add_expense(expense)
+    #gives app index
+    option_menu = get_options()
 
 
-    # Fetch all expenses from SQLite and summarize
-    expenses = get_all_expenses()
-    summarize_expense(expenses, budget)
+def get_options():
+    options = [
+        '1. Enter expense',
+        '2. View expense by id',
+        '3. Update expense',
+        '4. Delete expense',
+        '5. View all expense',
+    ]
+    print('\n'.join(options))
 
+    while True:
+        option = input('Choose an option: ')
+
+        if option == '1':
+            budget = 5000
+            expense = get_user_expense()
+            add_expense(expense)
+            expenses = get_all_expenses()
+            summarize_expense(expenses, budget)
+            break
+
+        elif option == '2':
+            pass
+        elif option == '3':
+            pass
+        elif option == '4':
+            pass
+        elif option == '5':
+            pass
+        
+        else:
+            print('Invalid option! Try again!')
+            break
 
 def get_user_expense():
     print('Geting User input ')
@@ -81,7 +106,7 @@ def get_user_expense():
 
 def summarize_expense(expenses: list[Expense], budget):
     print(f'🎯 Summarizing user Expense')
-    expenses : list[Expense] = []
+    #expenses : list[Expense] = []
 
     # with open(expense_file_path,'r', encoding = 'utf-8') as f:
     #     lines = f.readlines()
@@ -116,6 +141,36 @@ def summarize_expense(expenses: list[Expense], budget):
     print(f'💰 Remaining budget : ₹{remaining_budget:.2f}')
 
 
+def view_all_expenses():
+    expenses = get_all_expenses()
+
+    if not expenses:
+        print("No expenses found.")
+        return
+
+    print("\nID | NAME | AMOUNT | CATEGORY")
+    print("-" * 45)
+
+    for exp in expenses:
+        print(f"{exp.id} | {exp.name} | ₹{exp.amount:.2f} | {exp.category}")
+
+
+def view_expense_by_id():
+    expense_id = int(input("Enter expense id: "))
+
+    row = get_expense_by_id(expense_id)
+
+    if not row:
+        print("Expense not found.")
+        return
+
+    id, name, amount, category = row
+    print("\nExpense Found:")
+    print(f"ID: {id}")
+    print(f"Name: {name}")
+    print(f"Amount: ₹{amount:.2f}")
+    print(f"Category: {category}")
+
 
     #  LOGIC CODE TO SHOW HOW MUCH YOU CAN SPEND EACH DAY TILL END OF MONTH
 
@@ -128,7 +183,7 @@ def summarize_expense(expenses: list[Expense], budget):
 
     print('🗓️ Remaining days in current month: ', remaining_days)
 
-    daily_budget = remaining_budget / remaining_days
+    daily_budget = remaining_budget / remaining_days # type: ignore
     print(f'👉 Budget per day : ₹{daily_budget:.2f}')
 
 
