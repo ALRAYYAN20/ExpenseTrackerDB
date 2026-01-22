@@ -4,8 +4,11 @@
 # 3. SUMMARISE EXPENSE TOTALS
 # 4. SHOW REMAINING BUDGET
 
+import sys
+sys.stdout.reconfigure(encoding='utf-8')
+
 from expense import Expense
-from database import initialize_database, add_expense, get_all_expenses , get_expense_by_id
+from database import initialize_database, add_expense, get_all_expenses , get_expense_by_id, update_expense_in_db, delete_expense_in_db
 import calendar
 import datetime
 
@@ -44,13 +47,18 @@ def get_options():
             break
 
         elif option == '2':
-            pass
+            view_expense_by_id()
+            break
         elif option == '3':
-            pass
+            update_expense_by_id()
+            break
         elif option == '4':
-            pass
+            delete_expense_by_id()
+            break
         elif option == '5':
-            pass
+            print('All expenses....')
+            view_all_expenses()
+            break 
         
         else:
             print('Invalid option! Try again!')
@@ -152,11 +160,11 @@ def view_all_expenses():
     print("-" * 45)
 
     for exp in expenses:
-        print(f"{exp.id} | {exp.name} | ₹{exp.amount:.2f} | {exp.category}")
+        print(f"{exp.id} | {exp.name} | ₹{exp.amount} | {exp.category}")
 
 
 def view_expense_by_id():
-    expense_id = int(input("Enter expense id: "))
+    expense_id = (input("Enter expense id: "))
 
     row = get_expense_by_id(expense_id)
 
@@ -166,11 +174,65 @@ def view_expense_by_id():
 
     id, name, amount, category = row
     print("\nExpense Found:")
-    print(f"ID: {id}")
+    print(f"\nID: {id}")
     print(f"Name: {name}")
     print(f"Amount: ₹{amount:.2f}")
     print(f"Category: {category}")
 
+
+def update_expense_by_id():
+    print('---Updating Expense---')
+    expense_id = int(input('\nEnter expense id: '))
+
+    old_expense = get_expense_by_id(expense_id)
+    if old_expense is None:
+        print('No expense found!')
+        return
+    
+    print('\n--Current Data--')
+    print(old_expense)
+
+    name = str(input('\nEnter expense: '))
+    amount = int(input('Enter amount: '))
+    expense_category = [
+        '🍔 Food',
+        '🏡 HOME',
+        '💼 WORK',
+        '🎊 FUN',
+        '✨ MISC',
+    ]
+    
+    for i, cat in enumerate(expense_category, start=1):
+        print(f"{i}. {cat}")
+
+    choice = int(input("Select category (1-5): "))
+    category = expense_category[choice - 1]
+
+    update_expense_in_db(expense_id,name,amount,category,)
+    print('---Expense updated---')
+
+    
+def delete_expense_by_id():
+    print('---Choose expense id to delete---')
+
+    expense_id = int(input('Enter expense id to delete: '))
+
+    id_to_delete = get_expense_by_id(expense_id)
+    if id_to_delete is None:
+        print('Id not found')
+        return
+    
+    print('\n-Selected id for deletion-')
+    print(id_to_delete)
+
+    confirmation = input('Want to delete? Y / N : ').strip().lower()
+    if confirmation == 'Y' or 'y':
+        delete_expense_in_db(expense_id)
+        print('---Expense Deleted---')
+
+    else:
+        print('Deletion cancelled!')
+        
 
     #  LOGIC CODE TO SHOW HOW MUCH YOU CAN SPEND EACH DAY TILL END OF MONTH
 
@@ -181,10 +243,13 @@ def view_expense_by_id():
     # Calc remaning num of days in current month
     remaining_days = days_in_month - now.day
 
-    print('🗓️ Remaining days in current month: ', remaining_days)
+    print('\n🗓️ Remaining days in current month: ', remaining_days)
 
+    budget = 5000
+    remaining_budget = budget - remaining_days
+    
     daily_budget = remaining_budget / remaining_days # type: ignore
-    print(f'👉 Budget per day : ₹{daily_budget:.2f}')
+    print(f'\n👉 Budget per day : ₹{daily_budget:.2f}')
 
 
 if __name__ == '__main__':

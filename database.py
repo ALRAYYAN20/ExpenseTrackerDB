@@ -1,10 +1,19 @@
+# import sqlite3
+# from expense import Expense
+
+# db_name = 'expenses.db'
+
+# def get_connection():
+#     return sqlite3.connect(db_name)
+
 import sqlite3
+import os
 from expense import Expense
 
-db_name = 'expenses.db'
+DB_PATH = os.path.join(os.path.dirname(__file__), "expenses.db")
 
 def get_connection():
-    return sqlite3.connect(db_name)
+    return sqlite3.connect(DB_PATH)
 
 def initialize_database():
     conn = get_connection()
@@ -59,7 +68,7 @@ def get_expense_by_id(expense_id :int):
     cursor = conn.cursor()
 
     cursor.execute("SELECT id, name , amount, category FROM expenses WHERE id = ?",
-                    (expense_id),
+                    (expense_id,)
                     )
     row = cursor.fetchone()
     conn.close()
@@ -67,17 +76,17 @@ def get_expense_by_id(expense_id :int):
     return row 
 
 
-def delete_expenses_by_id(expense_id: int):
+def delete_expense_in_db(expense_id):
 
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id),)
+    cursor.execute("DELETE FROM expenses WHERE id = ?", (expense_id,))
 
     conn.commit()
     conn.close()
 
-def update_expense(expense_id: int, new_expense:Expense):
+def update_expense_in_db(expense_id,name,amount,category):
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -85,7 +94,7 @@ def update_expense(expense_id: int, new_expense:Expense):
     cursor.execute("""UPDATE expenses
                     SET name = ?, amount = ? , category = ?
                     WHERE id = ?
-                   """, (new_expense.name,new_expense.amount,new_expense.category,expense_id ))
+                   """, (name, amount, category, expense_id))
     
     conn.commit()
     conn.close()
