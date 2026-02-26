@@ -226,7 +226,7 @@ def delete_expense_by_id():
     print(id_to_delete)
 
     confirmation = input('Want to delete? Y / N : ').strip().lower()
-    if confirmation == 'Y' or 'y':
+    if confirmation.lower() == 'y':
         delete_expense_in_db(expense_id)
         print('---Expense Deleted---')
 
